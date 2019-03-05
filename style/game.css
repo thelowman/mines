@@ -15,16 +15,27 @@ section.game{
   max-height: 640px;
   background-color: #f3f3f3;
   position: relative;
+  text-align: center;
+}
+.timer{
+  font-size: 48px;
 }
 .start-game{
   text-align: center;
   position: absolute;
   bottom: 0;
+  left: 1em;
   width: calc(100% - 2em);
 }
 .start-button{
   height: 48px;
   border: 1px solid;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 3px 3px 3px rgba(0,0,0,.4);
+  padding-top: 8px;
+  cursor: pointer;
 }
 
 .game-board{

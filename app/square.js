@@ -122,7 +122,7 @@ function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onEx
   function endGame(){
     _gameOver = true;
     if(_mine && _marker == flag.none) //s.htmlElem.className = 'square mine';
-      s.htmlElem.style['background-image'] = 'url("img/unfound-mine2.png")'
+      s.htmlElem.style['background-image'] = 'url("img/unfound-mine.png")'
     else{
       if(_marker > flag.none && !_mine){
         // bad marker
