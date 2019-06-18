@@ -42,6 +42,11 @@ function startGame(width, height, mineRatio){
   timer.innerText = '0:00';
 }
 
+/**
+ * Called by the minefield when the user clicks
+ * a square.  If the game hasn't started yet
+ * this kicks off.
+ */
 function squareExposed(){
   if(!startedOn && !gameOver){
     startedOn = new Date();
