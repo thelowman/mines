@@ -34,12 +34,16 @@ function startLarge(){ startGame(32, 32, .16); }
 
 function startGame(width, height, mineRatio){
   clear();
+  if (startedOn) startedOn = undefined;
+  if (!gameOver) gameOver = true;
+
   mineData = new minefield(width, height, mineRatio, squareExposed, win, loose);
   mineData.elem.id = 'gameGrid';
   mineData.elem.className = 'grid';
   gameBoard.appendChild(mineData.elem);
   gameOver = false;
-  timer.innerText = '0:00';
+  timer.innerText = '00:00';
+  progress.innerText = mineData.markedMines + '/' + mineData.numMines;
 }
 
 /**
