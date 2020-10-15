@@ -1,7 +1,6 @@
 const flag = {
   none: 0,
-  marked: 1,
-  question: 2
+  marked: 1
 }
 
 function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onExplode){
@@ -97,7 +96,6 @@ function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onEx
 
   /**
    * Toggles the status of a flag on the square.
-   * Flags have 3 states: none, flag, and flag-question
    */
   function mark(){
     if(_gameOver) return;
@@ -106,10 +104,6 @@ function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onEx
       case flag.none:
         _marker = flag.marked;
         s.htmlElem.style['background-image'] = 'url("img/flag.png")';
-        break;
-      case flag.marked:
-        _marker = flag.question;
-        s.htmlElem.style['background-image'] = 'url("img/question.png")';
         break;
       default:
         _marker = flag.none;
