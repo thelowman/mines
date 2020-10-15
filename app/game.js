@@ -23,7 +23,11 @@ var interval;
 var gameOver;
 
 function clear(){
-  if(typeof(gameGrid) !== 'undefined')
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  if (typeof(gameGrid) !== 'undefined')
     gameBoard.removeChild(gameGrid);
 }
 
