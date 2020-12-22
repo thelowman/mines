@@ -3,6 +3,20 @@ const flag = {
   marked: 1
 }
 
+/**
+ * @typedef SquareConfig
+ * @property {number} x 
+ * @property {number} y 
+ * @property {number} size 
+ * @property {object} minePlacement 
+ * @property {() => void} onExpose Called when everything goes wrong
+ * @property {(object) => void} onIslandFound 
+ * @property {*} onMark 
+ * @property {*} onExplode 
+ */
+
+
+ 
 function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onExplode){
 
   var _nearbyMines = 0;
@@ -76,7 +90,7 @@ function square(x, y, size, minePlacement, onExpose, onIslandFound, onMark, onEx
    */
   function expose(){
     if(_gameOver) return;
-    if(!_marker == flag.none) return; // protect flagged squares
+    if(_marker !== flag.none) return; // protect flagged squares
     if(_exposed) return; // the suqre has already been exposed
 
     if(_mine){

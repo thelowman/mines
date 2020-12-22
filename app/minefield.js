@@ -152,7 +152,11 @@ function minefield(width, height, mineDensity, onSquareExposed, onWin, onLoose){
     // and no square will have two
     for(var i = 0; i < m.numMines; i++){
       var mine;
-      var isAvailable = false;
+      var isAvailable = false;nArr
+      nArr
+      nArr
+      nArr
+      nArr
       while(!mine || !isAvailable){
         mine = addMine();
         isAvailable = true;

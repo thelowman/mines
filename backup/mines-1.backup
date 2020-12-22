@@ -1,0 +1,73 @@
+// const arrN = (len, fn) => new Array(len).fill(fn());
+// const start = (h, w) => arrN(h, () => arrN(w, () => null));
+
+// Creates an array of len, calls fn with the index on every cell.
+const arrN = (len, fn) => new Array(len).fill(null).reduce((a,b,i) => a.concat([fn(i)]), []);
+
+
+const mine = (h, w, d, x, y) => {
+  const count = Math.ceil(h * w * d);
+  const indexes = [];
+  const start = x + y * w;
+  console.log(start);
+  const avoid = [
+    start - w - 1,
+    start - w,
+    start - w + 1,
+    start - 1,
+    start,
+    start + 1,
+    start + w -1,
+    start + w,
+    start + w + 1
+  ]
+  console.log(avoid);
+  let placed = 0;
+  while(placed < count) {
+    let check = Math.floor(Math.random() * h * w);
+    // console.log(check, avoid.indexOf(check) !== -1);
+    if (
+      indexes.indexOf(check) === -1 &&
+      avoid.indexOf(check) === -1
+    ) {
+      indexes.push(check);
+      placed++;
+    }
+  }
+
+  const ckLt = i => i % w !== 0;
+  const ckRt = i => i % w !== w - 1;
+  const ckUp = i => i > w;
+  const ckDn = i => i < w * (h - 1);
+
+  return i => {
+    if (indexes.indexOf(i) > -1) return 9;
+    let near = 0;
+
+    if (ckUp(i) && ckLt(i) && indexes.indexOf(i - w - 1) > -1) near++; // mine above, left
+    if (ckUp(i) && indexes.indexOf(i - w) > -1) near++; // mine above
+    if (ckUp(i) && ckRt(i) && indexes.indexOf(i - w + 1) > -1) near++; // mine above, right
+    if (ckLt(i) && indexes.indexOf(i - 1) > -1) near++; // mine to left
+    if (ckRt(i) && indexes.indexOf(i + 1) > -1) near++; // mine to right
+    if (ckDn(i) && ckLt(i) && indexes.indexOf(i + w -1) > -1) near++; // mine below, left
+    if (ckDn(i) && indexes.indexOf(i + w) > -1) near++; // mine below
+    if (ckDn(i) && ckRt(i) && indexes.indexOf(i + w + 1) > -1) near++; // mine below, right
+    return near;  
+  }
+}
+
+const start = (h, w, x, y) => {
+  const p = mine(h, w, 0.16, x, y);
+  return arrN(h, r => arrN(w, c => p(r * w + c)));
+}
+
+
+
+const grid = start(20, 20, 7, 7);
+// const grid = build(10,20);
+for(let i = 0; i < grid.length; i++)
+  console.log(JSON.stringify(grid[i]));
+
+// console.log(grid.length * grid[0].length);
+// console.log(next(next()))
+// console.log(new Array(10).fill(null).reduce((a,b,i) => a.concat([i]), []))

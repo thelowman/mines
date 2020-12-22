@@ -1,67 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mines!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link
-    href="https://fonts.googleapis.com/css?family=Indie+Flower"
-    rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="style/game.css">
-  <script src="app/game.js"></script>
-  <script src="app/minefield.js"></script>
-  <script src="app/square.js"></script>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Mines</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+  <style>
+    .overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .gameStart {
+      background: #fff;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .gameGrid {
+      border: 1px solid #000;
+      display: inline-block;
+      user-select: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .shown {
+      opacity: 1;
+    }
+    .row {
+      display: flex;
+    }
+    .cell {
+      width: 1.5em; 
+      height: 1.5em;
+      border: 1px solid #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hidden {
+      background-color: #aaa;
+    }
+    .marked:after {
+      content: "✗";
+    }
+    .boom {
+      background: red;
+    }
+    .startButton {
+      background: #aaa;
+      border: 1px solid #000;
+    }
+  </style>
+  <script src='mines.js'></script>
 </head>
 <body>
-
-
-
-  <section class="start-new-game">
-  </section>
-
-
-  <section class="game">
-    <div class="game-controls">
-
-      <div>
-        <div class="timer" id="timer"></div>
-        <div class="progress" id="progress"></div>
-      </div>
-
-      <div class='start-game'>
-        <div class="start-button" onclick="startSmall()">
-          Small
-        </div>
-        <div class="start-button" onclick="startMedium()">
-          Medium
-        </div>
-        <div class="start-button" onclick="startLarge()">
-          Large
-        </div>
-      </div>
-
-
-    </div>
-    <div id="gameBoard" class="game-board"></div>
-  </section>
-
-
-  <div class="preload">
-    <img src="img/0.png">
-    <img src="img/1.png">
-    <img src="img/2.png">
-    <img src="img/3.png">
-    <img src="img/4.png">
-    <img src="img/5.png">
-    <img src="img/6.png">
-    <img src="img/7.png">
-    <img src="img/8.png">
-    <img src="img/9.png">
-    <img src="img/flag.png">
-    <img src="img/question.png">
-    <img src="img/unfound-mine.png">
+  <!-- <div id="grid"></div> -->
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </p>
+  <div>
+    <button onclick="alert('boo')">Click me if you can!</button>
   </div>
-
-
 </body>
 </html>
