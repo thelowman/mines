@@ -162,6 +162,7 @@ const mines = () => {
 
     const mark = (x, y) => {
       const cell = byCoord(x, y);
+      if (!cell.elem.classList.contains('hidden')) return;
       if (!cell.elem.classList.contains('marked')) cell.elem.classList.add('marked');
       else cell.elem.classList.remove('marked');
       if (remainingUnmarked() === 0) win();
