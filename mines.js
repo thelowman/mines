@@ -27,7 +27,7 @@ const loadStyle = url => {
     console.warn(`Failed to load ${url}`, error.message);
   });
 }
-(function() { loadStyle(`/skin/default.css`) })();
+(function() { loadStyle(`./skin/default.css`) })();
 
 const createElem = (parent, onLClick, onRClick, ...classes) => {
   const elem = parent.appendChild(document.createElement('div'));
