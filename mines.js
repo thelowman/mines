@@ -1,4 +1,3 @@
-
 const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
 const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
 const cell_i = (w, h, g) => i => i > -1 && i < w * h ? g[Math.floor(i / w)][i % w] : undefined;
@@ -17,6 +16,8 @@ const border_i = (w, h) => (x, y) => {
   return b;
 }
 
+
+
 const loadStyle = url => {
   fetch(url).then(r => r.text()).then(t => {
     const style = document.createElement('style');
@@ -29,18 +30,23 @@ const loadStyle = url => {
 }
 (function() { loadStyle(`./skin/default.css`) })();
 
-const createElem = (parent, onLClick, onRClick, ...classes) => {
-  const elem = parent.appendChild(document.createElement('div'));
-  elem.classList.add(...classes);
+const createElem = config => {
+  const create = tag => document.createElement(tag ? tag : 'div');
+  const { parent, elemType, onLClick, onRClick, classes } = config;
+  const elem = parent ?
+    parent.appendChild(create(elemType)) :
+    create(elemType);
+  if (classes) elem.classList.add(...classes);
   if (onLClick || onRClick) {
     elem.addEventListener('mousedown', e => {
-      if (e.which === 1 && onLClick) onLClick();
-      if (e.which === 3 && onRClick) onRClick();
+      if (e.which === 1 && onLClick) onLClick(e);
+      if (e.which === 3 && onRClick) onRClick(e);
     });
   };
   return elem;
 }
 
+/** No mines until the first cell is clicked. */
 const generateMines = (w, h, d, x, y) => {
   const count = Math.ceil(h * w * d);
   const mines = [];
@@ -56,40 +62,39 @@ const generateMines = (w, h, d, x, y) => {
   return mines;
 }
 
-// Console warnings for template issues.
-const TE_NOSTARTWIDTH = 'No data-width specified in the template.'
-const TE_NOSTARTHEIGHT = 'No data-height specified in the template.'
+const stopEvent = e => {
+  e.preventDefault();
+  e.stopPropagation();
+}
 
 
 const mines = () => {
   let mines;
-  const overlay = document.createElement('div');
-  const gameStart = document.createElement('div');
-  const statusBoard = document.createElement('div');
-  const gameGrid = document.createElement('div');
+  const overlay = createElem({
+    onLClick: () => pause(),
+    classes: ['overlay']
+  });
+  const gameStart = createElem({
+    onLClick: e => stopEvent(e),
+    classes: ['gameStart']
+  });
+  const sizes = { Small: 10, Medium: 20, Large: 30 };
+  Object.keys(sizes).forEach(k => {
+    createElem({
+      parent: createElem({ parent: gameStart, classes: ['startButton'] }),
+      elemType: 'button',
+      onLClick: () => start(sizes[k], sizes[k])
+    }).innerText = k;
+  });
+  const statusBoard = createElem({ classes: ['statusBoard'] });
+  createElem({ parent: statusBoard, classes: ['time'] });
+  createElem({ parent: statusBoard, classes: ['flagged'] });
+  createElem({ parent: statusBoard, classes: ['total'] });
 
-  overlay.classList.add('overlay');
-  gameStart.classList.add('gameStart');
-  gameGrid.classList.add('gameGrid');
-
-  overlay.addEventListener('click', e => pause());
-  gameStart.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
-  gameGrid.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
-
-  const applySkin = name => {
-    const skin = name ? name : basic;
-    gameStart.innerHTML = skin.startScreenHTML;
-    gameStart.querySelectorAll(`[data-action="start"]`).forEach(elem => {
-      let w = 10;
-      let h = 10;
-      if (isNaN(elem.dataset.width)) console.warn(TE_NOSTARTWIDTH);
-      else w = parseInt(elem.dataset.width);
-      if (isNaN(elem.dataset.height)) console.warn(TE_NOSTARTHEIGHT);
-      else h = parseInt(elem.dataset.height);
-      elem.addEventListener('click', e => start(w, h));
-    });
-    statusBoard.innerHTML = skin.statusBoardHTML;
-  }
+  const gameGrid = createElem({
+    onLClick: e => stopEvent(e),
+    classes: ['gameGrid']
+  });
 
   const pause = () => {
     window.oncontextmenu = e => true;
@@ -117,13 +122,21 @@ const mines = () => {
   const start = (w, h) => {
     gameGrid.appendChild(statusBoard);
     const grid = createGrid(w, h, (r, rI) => {
-      const row = createElem(gameGrid, null, null, 'row');
+      const row = createElem({
+        parent: gameGrid,
+        classes: ['row']
+      });
       return (c, cI) => ({
         y: rI,
         x: cI,
         index: rI * w + cI,
         value: 0,
-        elem: createElem(row, () => click(cI, rI), () => mark(cI, rI), 'cell', 'hidden')
+        elem: createElem({
+          parent: row, 
+          onLClick: () => click(cI, rI), 
+          onRClick: () => mark(cI, rI), 
+          classes: ['cell', 'hidden']
+        })
       });
     });
 
@@ -213,7 +226,6 @@ const mines = () => {
     }
   }
 
-  applySkin();
   window.oncontextmenu = e => false;
   document.body.appendChild(overlay);
   overlay.appendChild(gameStart);
@@ -223,39 +235,4 @@ const mines = () => {
   }, 100);
 
   return { pause, resume }
-};
-
-
-const basic = {
-  startScreenHTML: `
-    <div>
-      <div>
-        <button class="startButton"
-          data-action="start"
-          data-width="10"
-          data-height="10">
-          10 x 10
-        </button>
-        <button class="startButton"
-          data-action="start"
-          data-width="20"
-          data-height="20">
-          20 x 20
-        </button>
-        <button class="startButton"
-          data-action="start"
-          data-width="30"
-          data-height="30">
-          30 x 30
-        </button>
-      </div>
-    </div>
-    `,
-  statusBoardHTML: `
-    <div class="statusBoard">
-      <div data-value="time">Time</div>
-      <div data-value="marked">Marked</div>
-      <div data-value="total">Total</div>
-    </div>
-  `
 };
