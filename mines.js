@@ -1,3 +1,24 @@
+const gameSizes = {
+  [`Small`]:  { w: 10,  h: 10 },
+  [`Medium`]: { w: 20,  h: 20 }, 
+  [`Large`]:  { w: 30,  h: 20 }
+};
+/** Loads a stylesheet immediately. */
+const loadStyle = url => {
+  fetch(url).then(r => r.text()).then(t => {
+    const style = document.createElement('style');
+    style.appendChild(document.createTextNode(t));
+    return document.head.appendChild(style);
+  })
+  .catch(error => {
+    console.warn(`Failed to load ${url}`, error.message);
+  });
+}
+(function() { loadStyle(`./skin/default.css`) })();
+
+
+
+
 const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
 const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
 const cell_i = (w, h, g) => i => i > -1 && i < w * h ? g[Math.floor(i / w)][i % w] : undefined;
@@ -17,22 +38,27 @@ const border_i = (w, h) => (x, y) => {
 }
 
 
+/**
+ * @typedef CreateElemParams
+ * Parameters used to control how each child element is created.
+ * @property {*=} parent The HTML parent element.
+ * @property {string=} elemType Tag for the element to create (div by default).
+ * @property {(e:Event) => void=} onLClick Handler for a left click event.
+ * @property {(e:Event) => void=} onRClick Handler for a right click event.
+ * @property {string[]=} classes CSS classes to add to the new element.
+ */
 
-const loadStyle = url => {
-  fetch(url).then(r => r.text()).then(t => {
-    const style = document.createElement('style');
-    style.appendChild(document.createTextNode(t));
-    return document.head.appendChild(style);
-  })
-  .catch(error => {
-    console.warn(`Failed to load ${url}`, error.message);
-  });
-}
-(function() { loadStyle(`./skin/default.css`) })();
 
-const createElem = config => {
+/**
+ * Constructs a new HTML element.  If the parent is specified in "params" the
+ * new element will automatically be added to the parent's heirarcy.
+ * > NOTE: onLClick and onRClick will be called in response to a
+ * > mouse down event rather than an acutal click event.
+ * @param {CreateElemParams} params 
+ */
+const createElem = params => {
   const create = tag => document.createElement(tag ? tag : 'div');
-  const { parent, elemType, onLClick, onRClick, classes } = config;
+  const { parent, elemType, onLClick, onRClick, classes } = params;
   const elem = parent ?
     parent.appendChild(create(elemType)) :
     create(elemType);
@@ -78,12 +104,11 @@ const mines = () => {
     onLClick: e => stopEvent(e),
     classes: ['gameStart']
   });
-  const sizes = { Small: 10, Medium: 20, Large: 30 };
-  Object.keys(sizes).forEach(k => {
+  Object.keys(gameSizes).forEach(k => {
     createElem({
       parent: createElem({ parent: gameStart, classes: ['startButton'] }),
       elemType: 'button',
-      onLClick: () => start(sizes[k], sizes[k])
+      onLClick: () => start(gameSizes[k].w, gameSizes[k].h)
     }).innerText = k;
   });
   const statusBoard = createElem({ classes: ['statusBoard'] });
