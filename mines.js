@@ -101,6 +101,32 @@ const stopEvent = e => {
   e.stopPropagation();
 }
 
+const gameTimer = elem => {
+  let elapsed = 0;
+  let started;
+  let interval;
+  const tick = () => {
+    elapsed += new Date() - started;
+    started = new Date();
+    elem.innerText = Math.floor(elapsed / 1000);
+  }
+  const start = () => {
+    started = new Date();
+    interval = setInterval(tick, 100);
+  }
+  const pause = () => {
+    clearInterval(interval);
+    tick();
+  }
+  const reset = () => {
+    if (interval) pause();
+    elapsed = 0;
+    elem.innerText = 0;
+  }
+  reset();
+  return { start, pause, reset }
+}
+
 
 const mines = () => {
   let mines;
@@ -135,9 +161,10 @@ const mines = () => {
   });
   // --------------------------------
   const statusBoard = createElem({ classes: ['statusBoard'] });
-  createElem({ parent: statusBoard, classes: ['time'] });
-  createElem({ parent: statusBoard, classes: ['flagged'] });
-  createElem({ parent: statusBoard, classes: ['total'] });
+  createElem({ parent: statusBoard }).innerText = 'Time';
+  const timeDisplay = createElem({ parent: statusBoard, classes: ['time'] });
+  const timer = gameTimer(timeDisplay);
+  // --------------------------------
 
   const gameGrid = createElem({
     onLClick: e => stopEvent(e),
@@ -145,12 +172,14 @@ const mines = () => {
   });
 
   const pause = () => {
+    timer.pause();
     window.oncontextmenu = e => true;
     overlay.classList.remove('shown');
     setTimeout(() => document.body.removeChild(overlay), 500);
   }
 
   const resume = () => {
+    timer.start();
     window.oncontextmenu = e => false;
     document.body.appendChild(overlay);
     setTimeout(() => overlay.classList.add('shown'), 100);
@@ -168,6 +197,7 @@ const mines = () => {
   }
 
   const start = (w, h) => {
+    timer.reset();
     gameGrid.appendChild(statusBoard);
     const grid = createGrid(w, h, (r, rI) => {
       const row = createElem({
@@ -243,7 +273,10 @@ const mines = () => {
 
     // first click places mines
     const click = (x, y) => {
-      if (!mines) mines = generateMines(w, h, 0.16, x, y);
+      if (!mines) {
+        mines = generateMines(w, h, 0.16, x, y);
+        timer.start();
+      }
       for(let i = 0; i < w * h; i++) {
         let cell = byIndex(i);
         if (mines.indexOf(cell.index) > -1) cell.value = 9;
@@ -259,6 +292,7 @@ const mines = () => {
     }
 
     const boom = (x, y) => {
+      timer.pause();
       const unmarked = mines.reduce((f, m) => {
         const cell = byIndex(m);
         if (!cell.elem.classList.contains('marked'))
