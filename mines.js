@@ -72,7 +72,14 @@ const createElem = params => {
   return elem;
 }
 
-/** No mines until the first cell is clicked. */
+/**
+ * No mines until the first cell is clicked.
+ * @param {number} w Width of the grid.
+ * @param {number} h Height of the grid.
+ * @param {number} d Density of mines (0 - 1).
+ * @param {number} x X coordinate of the first click (no mines allowed here).
+ * @param {number} y Y coordinate of the first click (no mines allowed here).
+ */
 const generateMines = (w, h, d, x, y) => {
   const count = Math.ceil(h * w * d);
   const mines = [];
@@ -88,6 +95,7 @@ const generateMines = (w, h, d, x, y) => {
   return mines;
 }
 
+/** Stops the current event propagation. */
 const stopEvent = e => {
   e.preventDefault();
   e.stopPropagation();
@@ -96,21 +104,36 @@ const stopEvent = e => {
 
 const mines = () => {
   let mines;
+  // --------------------------------
   const overlay = createElem({
     onLClick: () => pause(),
     classes: ['overlay']
   });
+  // --------------------------------
   const gameStart = createElem({
     onLClick: e => stopEvent(e),
     classes: ['gameStart']
   });
+  const content = createElem({
+    parent: gameStart,
+    classes: ['content']
+  });
+  const title = createElem({
+    parent: content,
+    classes: ['title']
+  })
+  const buttons = createElem({
+    parent: content,
+    classes: ['buttons']
+  });
   Object.keys(gameSizes).forEach(k => {
     createElem({
-      parent: createElem({ parent: gameStart, classes: ['startButton'] }),
+      parent: createElem({ parent: buttons, classes: ['startButton'] }),
       elemType: 'button',
       onLClick: () => start(gameSizes[k].w, gameSizes[k].h)
     }).innerText = k;
   });
+  // --------------------------------
   const statusBoard = createElem({ classes: ['statusBoard'] });
   createElem({ parent: statusBoard, classes: ['time'] });
   createElem({ parent: statusBoard, classes: ['flagged'] });
