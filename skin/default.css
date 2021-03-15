@@ -20,7 +20,7 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.25s;
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgb(0 0 0 / 50%);
 }
@@ -60,7 +60,7 @@
   display: flex;
   justify-content: flex-end;
   margin-right: 4px;
-  width: 30%;
+  width: 3em;
 }
 .gameGrid {
   display: inline-block;
@@ -91,6 +91,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.1s;
 }
 .hidden {
   background-color: #aaa;

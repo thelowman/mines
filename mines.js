@@ -227,7 +227,7 @@ const mines = () => {
       overlay.removeChild(gameStart);
       overlay.appendChild(gameGrid);
       setTimeout(() => gameGrid.classList.add('shown'), 100)
-    }, 500);
+    }, 250);
 
     const reveal = (x, y) => {
       const cell = byCoord(x, y);
@@ -240,9 +240,9 @@ const mines = () => {
         else cell.elem.innerText = cell.value;
       }
       else {
-        border(cell.x, cell.y).forEach(i => {
-          var c = byIndex(i);
-          reveal(c.x, c.y)
+        border(cell.x, cell.y).forEach((ci, i) => {
+          var c = byIndex(ci);
+          setTimeout(() => reveal(c.x, c.y), i * 2);
         });
       }
       if (remainingCells() === 0) win();
@@ -300,7 +300,7 @@ const mines = () => {
         return f;
       }, []).sort((a, b) => a.dist > b.dist ? 1 : a.dist < b.dist ? -1 : 0)
       unmarked.forEach((c, i) => {
-        setTimeout(() => c.cell.elem.classList.add('boom'), i * 20);
+        setTimeout(() => c.cell.elem.classList.add('boom'), i * 10);
       });
       setTimeout(() => {
         reset();
