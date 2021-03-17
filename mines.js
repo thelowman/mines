@@ -1,8 +1,13 @@
+// Settings
+const revealDelay = 30;
+const boomDelay = 50;
+
 const gameSizes = {
   [`Small`]:  { w: 10,  h: 10 },
   [`Medium`]: { w: 20,  h: 20 }, 
   [`Large`]:  { w: 30,  h: 20 }
 };
+
 /** Loads a stylesheet immediately. */
 const loadStyle = url => {
   fetch(url).then(r => r.text()).then(t => {
@@ -236,19 +241,39 @@ const mines = () => {
     }, 250);
 
     const reveal = (x, y) => {
+      const adjacent = (accrued, cell) => {
+        if (accrued.indexOf(cell) == -1) {
+          accrued.push(cell);
+          if (cell.value === 0) {
+            const bdr = border(cell.x, cell.y).map(i => byIndex(i));
+            for(let i = 0; i < bdr.length; i++)
+              if (accrued.indexOf(bdr[i]) == -1) adjacent(accrued, bdr[i]);
+          }
+        }
+        return accrued;
+      }
+
       const cell = byCoord(x, y);
       if (!cell.elem.classList.contains('hidden') || 
         cell.elem.classList.contains('marked')) return;
-
-      cell.elem.classList.remove('hidden');
-      if (cell.value) {
-        if (cell.value === 9) boom(cell.x, cell.y);
-        else cell.elem.innerText = cell.value;
+      if (cell.value === 9) {
+        cell.elem.classList.remove('hidden');
+        boom(cell.x, cell.y);
+        return;
+      }
+      if (cell.value > 0) {
+        cell.elem.classList.remove('hidden');
+        cell.elem.innerText = cell.value;
       }
       else {
-        border(cell.x, cell.y).forEach((ci, i) => {
-          var c = byIndex(ci);
-          setTimeout(() => reveal(c.x, c.y), i * 2);
+        revealedCells = byDist(cell, adjacent([], cell));
+        revealedCells.forEach((cells, i) => {
+          setTimeout(() => {
+            cells.forEach(c => {
+              c.elem.classList.remove('hidden');
+              if (c.value > 0) c.elem.innerText = c.value;
+            });
+          }, i * revealDelay);
         });
       }
       if (remainingCells() === 0) win();
@@ -306,7 +331,7 @@ const mines = () => {
         return f;
       }, []));
       unmarked.forEach((um, i) => {
-        setTimeout(() => um.forEach(c => c.elem.classList.add('boom')), i * 50);
+        setTimeout(() => um.forEach(c => c.elem.classList.add('boom')), i * boomDelay);
       });
       
       setTimeout(() => {
