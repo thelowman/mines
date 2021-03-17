@@ -295,6 +295,7 @@ const mines = () => {
       , 0), 0);
 
     const mark = (x, y) => {
+      if (!mines) return;
       const cell = byCoord(x, y);
       if (!cell.elem.classList.contains('hidden')) return;
       if (!cell.elem.classList.contains('marked')) cell.elem.classList.add('marked');
