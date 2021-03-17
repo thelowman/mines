@@ -140,6 +140,7 @@ const gameTimer = elem => {
 
 
 const mines = () => {
+  let gameStarted = false;
   let mines;
   // --------------------------------
   const overlay = createElem({
@@ -197,6 +198,7 @@ const mines = () => {
   }
 
   const reset = () => {
+    gameStarted = false;
     gameGrid.classList.remove('shown');
     setTimeout(() => {
       while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
@@ -208,6 +210,8 @@ const mines = () => {
   }
 
   const start = (w, h) => {
+    if (gameStarted) return;
+    gameStarted = true;
     timer.reset();
     gameGrid.appendChild(statusBoard);
     const grid = createGrid(w, h, (r, rI) => {
