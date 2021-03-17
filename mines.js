@@ -36,6 +36,12 @@ const border_i = (w, h) => (x, y) => {
   if (x < (w - 1) && y < (h - 1)) b.push(startPt + w + 1);
   return b;
 }
+const byDist = (from, targets) => targets.reduce((f, cell) => {
+  const d = Math.floor(Math.sqrt(Math.pow(cell.x - from.x, 2) + Math.pow(cell.y - from.y, 2)));
+  if (!f[d]) f[d] = [];
+  f[d].push(cell);
+  return f;
+}, []);
 
 
 /**
@@ -293,18 +299,19 @@ const mines = () => {
 
     const boom = (x, y) => {
       timer.pause();
-      const unmarked = mines.reduce((f, m) => {
+
+      const unmarked = byDist(byCoord(x, y), mines.reduce((f, m) => {
         const cell = byIndex(m);
-        if (!cell.elem.classList.contains('marked'))
-          return f.concat({ cell, dist: Math.sqrt(Math.pow(cell.x - x, 2) + Math.pow(cell.y - y, 2)) })
+        if (!cell.elem.classList.contains('marked')) f.push(cell);
         return f;
-      }, []).sort((a, b) => a.dist > b.dist ? 1 : a.dist < b.dist ? -1 : 0)
-      unmarked.forEach((c, i) => {
-        setTimeout(() => c.cell.elem.classList.add('boom'), i * 10);
+      }, []));
+      unmarked.forEach((um, i) => {
+        setTimeout(() => um.forEach(c => c.elem.classList.add('boom')), i * 50);
       });
+      
       setTimeout(() => {
         reset();
-      }, unmarked.length * 20 + 1000);
+      }, unmarked.length * 50 + 1000);
     }
   }
 
