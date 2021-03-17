@@ -14,20 +14,21 @@
       text-align: center;
     }
   </style>
-  <script src='mines.js'></script>
-  <script>
+  <script type="module" src="mines.js"></script>
+  <!-- <script>
     let game;
     const playClick = () => {
       if (game) game.resume();
       else game = mines();
     }
-  </script>
+  </script> -->
 </head>
 <body>
   <section>
     <h1>Mines</h1>
     <div>
-      <button onclick="playClick()">Play!</button>
+      <button id="play">Play!</button>
+      <!-- <button onclick="playClick()">Play!</button> -->
     </div>
   </section>
 </body>

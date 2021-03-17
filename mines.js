@@ -1,3 +1,7 @@
+// import { create } from './modules/elements.js';
+import { gameTimer } from './modules/gameTimer.js';
+import { createGrid, cell_i, cell_xy, border_i, byDist } from './modules/gridFunctions.js';
+
 // Settings
 const revealDelay = 30;
 const boomDelay = 50;
@@ -24,29 +28,29 @@ const loadStyle = url => {
 
 
 
-const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
-const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
-const cell_i = (w, h, g) => i => i > -1 && i < w * h ? g[Math.floor(i / w)][i % w] : undefined;
-const cell_xy = (w, h, g) => (x, y) => x >= 0 && x < w && y >= 0 && y < h ? g[y][x] : undefined;
-const border_i = (w, h) => (x, y) => {
-  const startPt = x + y * w;
-  const b = [];
-  if (x > 0 && y > 0) b.push(startPt - w - 1);
-  if (y > 0) b.push(startPt - w);
-  if (y > 0 && x < (w - 1)) b.push(startPt - w + 1);
-  if (x > 0) b.push(startPt - 1);
-  if (x < (w - 1)) b.push(startPt + 1);
-  if (x > 0 && y < (h - 1)) b.push(startPt + w - 1);
-  if (y < (h - 1)) b.push(startPt + w);
-  if (x < (w - 1) && y < (h - 1)) b.push(startPt + w + 1);
-  return b;
-}
-const byDist = (from, targets) => targets.reduce((f, cell) => {
-  const d = Math.floor(Math.sqrt(Math.pow(cell.x - from.x, 2) + Math.pow(cell.y - from.y, 2)));
-  if (!f[d]) f[d] = [];
-  f[d].push(cell);
-  return f;
-}, []);
+// const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
+// const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
+// const cell_i = (w, h, g) => i => i > -1 && i < w * h ? g[Math.floor(i / w)][i % w] : undefined;
+// const cell_xy = (w, h, g) => (x, y) => x >= 0 && x < w && y >= 0 && y < h ? g[y][x] : undefined;
+// const border_i = (w, h) => (x, y) => {
+//   const startPt = x + y * w;
+//   const b = [];
+//   if (x > 0 && y > 0) b.push(startPt - w - 1);
+//   if (y > 0) b.push(startPt - w);
+//   if (y > 0 && x < (w - 1)) b.push(startPt - w + 1);
+//   if (x > 0) b.push(startPt - 1);
+//   if (x < (w - 1)) b.push(startPt + 1);
+//   if (x > 0 && y < (h - 1)) b.push(startPt + w - 1);
+//   if (y < (h - 1)) b.push(startPt + w);
+//   if (x < (w - 1) && y < (h - 1)) b.push(startPt + w + 1);
+//   return b;
+// }
+// const byDist = (from, targets) => targets.reduce((f, cell) => {
+//   const d = Math.floor(Math.sqrt(Math.pow(cell.x - from.x, 2) + Math.pow(cell.y - from.y, 2)));
+//   if (!f[d]) f[d] = [];
+//   f[d].push(cell);
+//   return f;
+// }, []);
 
 
 /**
@@ -59,7 +63,6 @@ const byDist = (from, targets) => targets.reduce((f, cell) => {
  * @property {string[]=} classes CSS classes to add to the new element.
  */
 
-
 /**
  * Constructs a new HTML element.  If the parent is specified in "params" the
  * new element will automatically be added to the parent's heirarcy.
@@ -67,7 +70,7 @@ const byDist = (from, targets) => targets.reduce((f, cell) => {
  * > mouse down event rather than an acutal click event.
  * @param {CreateElemParams} params 
  */
-const createElem = params => {
+ const createElem = params => {
   const create = tag => document.createElement(tag ? tag : 'div');
   const { parent, elemType, onLClick, onRClick, classes } = params;
   const elem = parent ?
@@ -82,6 +85,7 @@ const createElem = params => {
   };
   return elem;
 }
+
 
 /**
  * No mines until the first cell is clicked.
@@ -111,33 +115,6 @@ const stopEvent = e => {
   e.preventDefault();
   e.stopPropagation();
 }
-
-const gameTimer = elem => {
-  let elapsed = 0;
-  let started;
-  let interval;
-  const tick = () => {
-    elapsed += new Date() - started;
-    started = new Date();
-    elem.innerText = Math.floor(elapsed / 1000);
-  }
-  const start = () => {
-    started = new Date();
-    interval = setInterval(tick, 100);
-  }
-  const pause = () => {
-    clearInterval(interval);
-    tick();
-  }
-  const reset = () => {
-    if (interval) pause();
-    elapsed = 0;
-    elem.innerText = 0;
-  }
-  reset();
-  return { start, pause, reset }
-}
-
 
 const mines = () => {
   let gameStarted = false;
@@ -270,7 +247,7 @@ const mines = () => {
         cell.elem.innerText = cell.value;
       }
       else {
-        revealedCells = byDist(cell, adjacent([], cell));
+        let revealedCells = byDist(cell, adjacent([], cell));
         revealedCells.forEach((cells, i) => {
           setTimeout(() => {
             cells.forEach(c => {
@@ -355,3 +332,11 @@ const mines = () => {
 
   return { pause, resume }
 };
+
+
+let game;
+const playClick = () => {
+  if (game) game.resume();
+  else game = mines();
+}
+document.getElementById('play').addEventListener('click', playClick);
