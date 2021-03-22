@@ -1,6 +1,8 @@
+import './modules/style.js';
 // import { create } from './modules/elements.js';
 import { gameTimer } from './modules/gameTimer.js';
-import { createGrid, cell_i, cell_xy, border_i, byDist } from './modules/gridFunctions.js';
+import { createGrid, cell_i, cell_xy, 
+  border_i, byDist, generateMines } from './modules/gridFunctions.js';
 
 // Settings
 const revealDelay = 30;
@@ -12,56 +14,37 @@ const gameSizes = {
   [`Large`]:  { w: 30,  h: 20 }
 };
 
-/** Loads a stylesheet immediately. */
-const loadStyle = url => {
-  fetch(url).then(r => r.text()).then(t => {
-    const style = document.createElement('style');
-    style.appendChild(document.createTextNode(t));
-    return document.head.appendChild(style);
-  })
-  .catch(error => {
-    console.warn(`Failed to load ${url}`, error.message);
-  });
+
+const ddddd = (timer, overlay, gameGrid, gameStart) => {
+  const pause = () => {
+    timer.pause();
+    window.oncontextmenu = e => true;
+    overlay.classList.remove('shown');
+    setTimeout(() => document.body.removeChild(overlay), 500);
+  }
+  const resume = () => {
+    timer.start();
+    window.oncontextmenu = e => false;
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('shown'), 100);
+  }
+  const reset = () => {
+    gameStarted = false;
+    gameGrid.classList.remove('shown');
+    setTimeout(() => {
+      while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
+      mines = null;
+      overlay.removeChild(gameGrid);
+      overlay.appendChild(gameStart);
+      setTimeout(() => gameStart.classList.add('shown'), 100);
+    }, 500);
+  }
+  return { pause, resume, reset }
 }
-(function() { loadStyle(`./skin/default.css`) })();
 
 
 
 
-// const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
-// const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
-// const cell_i = (w, h, g) => i => i > -1 && i < w * h ? g[Math.floor(i / w)][i % w] : undefined;
-// const cell_xy = (w, h, g) => (x, y) => x >= 0 && x < w && y >= 0 && y < h ? g[y][x] : undefined;
-// const border_i = (w, h) => (x, y) => {
-//   const startPt = x + y * w;
-//   const b = [];
-//   if (x > 0 && y > 0) b.push(startPt - w - 1);
-//   if (y > 0) b.push(startPt - w);
-//   if (y > 0 && x < (w - 1)) b.push(startPt - w + 1);
-//   if (x > 0) b.push(startPt - 1);
-//   if (x < (w - 1)) b.push(startPt + 1);
-//   if (x > 0 && y < (h - 1)) b.push(startPt + w - 1);
-//   if (y < (h - 1)) b.push(startPt + w);
-//   if (x < (w - 1) && y < (h - 1)) b.push(startPt + w + 1);
-//   return b;
-// }
-// const byDist = (from, targets) => targets.reduce((f, cell) => {
-//   const d = Math.floor(Math.sqrt(Math.pow(cell.x - from.x, 2) + Math.pow(cell.y - from.y, 2)));
-//   if (!f[d]) f[d] = [];
-//   f[d].push(cell);
-//   return f;
-// }, []);
-
-
-/**
- * @typedef CreateElemParams
- * Parameters used to control how each child element is created.
- * @property {*=} parent The HTML parent element.
- * @property {string=} elemType Tag for the element to create (div by default).
- * @property {(e:Event) => void=} onLClick Handler for a left click event.
- * @property {(e:Event) => void=} onRClick Handler for a right click event.
- * @property {string[]=} classes CSS classes to add to the new element.
- */
 
 /**
  * Constructs a new HTML element.  If the parent is specified in "params" the
@@ -87,28 +70,6 @@ const loadStyle = url => {
 }
 
 
-/**
- * No mines until the first cell is clicked.
- * @param {number} w Width of the grid.
- * @param {number} h Height of the grid.
- * @param {number} d Density of mines (0 - 1).
- * @param {number} x X coordinate of the first click (no mines allowed here).
- * @param {number} y Y coordinate of the first click (no mines allowed here).
- */
-const generateMines = (w, h, d, x, y) => {
-  const count = Math.ceil(h * w * d);
-  const mines = [];
-  const avoid = border_i(w, h)(x, y);
-  avoid.push(x + y * w);
-  while(mines.length < count) {
-    let check = Math.floor(Math.random() * h * w);
-    if (
-      mines.indexOf(check) === -1 &&
-      avoid.indexOf(check) === -1
-    ) mines.push(check);
-  }
-  return mines;
-}
 
 /** Stops the current event propagation. */
 const stopEvent = e => {
@@ -119,6 +80,7 @@ const stopEvent = e => {
 const mines = () => {
   let gameStarted = false;
   let mines;
+
   // --------------------------------
   const overlay = createElem({
     onLClick: () => pause(),
@@ -160,31 +122,7 @@ const mines = () => {
     classes: ['gameGrid']
   });
 
-  const pause = () => {
-    timer.pause();
-    window.oncontextmenu = e => true;
-    overlay.classList.remove('shown');
-    setTimeout(() => document.body.removeChild(overlay), 500);
-  }
-
-  const resume = () => {
-    timer.start();
-    window.oncontextmenu = e => false;
-    document.body.appendChild(overlay);
-    setTimeout(() => overlay.classList.add('shown'), 100);
-  }
-
-  const reset = () => {
-    gameStarted = false;
-    gameGrid.classList.remove('shown');
-    setTimeout(() => {
-      while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
-      mines = null;
-      overlay.removeChild(gameGrid);
-      overlay.appendChild(gameStart);
-      setTimeout(() => gameStart.classList.add('shown'), 100);
-    }, 500);
-  }
+  const { pause, resume, reset } = ddddd(timer, overlay, gameGrid, gameStart);
 
   const start = (w, h) => {
     if (gameStarted) return;
@@ -333,7 +271,8 @@ const mines = () => {
   return { pause, resume }
 };
 
-
+// At the moment, there must be an element with an id of "play"
+// to kick things off.
 let game;
 const playClick = () => {
   if (game) game.resume();

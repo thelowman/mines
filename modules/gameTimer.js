@@ -1,3 +1,8 @@
+/**
+ * Creates a timer for the game.
+ * @param {HTMLElement} elem 
+ * @returns 
+ */
 export const gameTimer = elem => {
   let elapsed = 0;
   let started;
