@@ -1,5 +1,5 @@
 import './modules/style.js';
-// import { create } from './modules/elements.js';
+import { createElements } from './modules/createElements.js';
 import { gameTimer } from './modules/gameTimer.js';
 import { createGrid, cell_i, cell_xy, 
   border_i, byDist, generateMines } from './modules/gridFunctions.js';
@@ -13,9 +13,14 @@ const gameSizes = {
   [`Medium`]: { w: 20,  h: 20 }, 
   [`Large`]:  { w: 30,  h: 20 }
 };
+const improvedGameSizes = [
+  { name: 'Small',  class: 'small',  w: 10, h: 10 },
+  { name: 'Medium', class: 'medium', w: 20, h: 20 },
+  { name: 'Large',  class: 'large',  w: 30, h: 20 }
+];
 
 
-const ddddd = (timer, overlay, gameGrid, gameStart) => {
+const needFuncName = (timer, overlay, gameGrid, gameStart) => {
   const pause = () => {
     timer.pause();
     window.oncontextmenu = e => true;
@@ -29,11 +34,9 @@ const ddddd = (timer, overlay, gameGrid, gameStart) => {
     setTimeout(() => overlay.classList.add('shown'), 100);
   }
   const reset = () => {
-    gameStarted = false;
     gameGrid.classList.remove('shown');
     setTimeout(() => {
       while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
-      mines = null;
       overlay.removeChild(gameGrid);
       overlay.appendChild(gameStart);
       setTimeout(() => gameStart.classList.add('shown'), 100);
@@ -81,48 +84,19 @@ const mines = () => {
   let gameStarted = false;
   let mines;
 
-  // --------------------------------
-  const overlay = createElem({
-    onLClick: () => pause(),
-    classes: ['overlay']
-  });
-  // --------------------------------
-  const gameStart = createElem({
-    onLClick: e => stopEvent(e),
-    classes: ['gameStart']
-  });
-  const content = createElem({
-    parent: gameStart,
-    classes: ['content']
-  });
-  const title = createElem({
-    parent: content,
-    classes: ['title']
-  })
-  const buttons = createElem({
-    parent: content,
-    classes: ['buttons']
-  });
-  Object.keys(gameSizes).forEach(k => {
-    createElem({
-      parent: createElem({ parent: buttons, classes: ['startButton'] }),
-      elemType: 'button',
-      onLClick: () => start(gameSizes[k].w, gameSizes[k].h)
-    }).innerText = k;
-  });
-  // --------------------------------
-  const statusBoard = createElem({ classes: ['statusBoard'] });
-  createElem({ parent: statusBoard }).innerText = 'Time';
-  const timeDisplay = createElem({ parent: statusBoard, classes: ['time'] });
-  const timer = gameTimer(timeDisplay);
-  // --------------------------------
 
   const gameGrid = createElem({
     onLClick: e => stopEvent(e),
     classes: ['gameGrid']
   });
 
-  const { pause, resume, reset } = ddddd(timer, overlay, gameGrid, gameStart);
+  const { overlay, gameStart, startButtons, statusBoard, timeDisplay } = createElements(improvedGameSizes);
+  overlay.addEventListener('click', () => pause());
+  gameStart.addEventListener('click', e => stopEvent(e));
+  // wire up start buttons
+  startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
+  const timer = gameTimer(timeDisplay);
+  const { pause, resume, reset } = needFuncName(timer, overlay, gameGrid, gameStart);
 
   const start = (w, h) => {
     if (gameStarted) return;
@@ -240,6 +214,8 @@ const mines = () => {
 
     const win = () => {
       reset();
+      gameStarted = false;
+      mines = null;
     }
 
     const boom = (x, y) => {
@@ -256,6 +232,8 @@ const mines = () => {
       
       setTimeout(() => {
         reset();
+        gameStarted = false;
+        mines = null;
       }, unmarked.length * 50 + 1000);
     }
   }
