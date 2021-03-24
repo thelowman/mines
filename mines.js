@@ -1,19 +1,19 @@
 import './modules/style.js';
 import { createElements } from './modules/createElements.js';
 import { gameTimer } from './modules/gameTimer.js';
-import { createGrid, cell_i, cell_xy, 
-  border_i, byDist, generateMines } from './modules/gridFunctions.js';
+import {
+  createGrid,
+  cell_i,
+  cell_xy, 
+  border_i,
+  byDist,
+  generateMines } from './modules/gridFunctions.js';
 
 // Settings
 const revealDelay = 30;
 const boomDelay = 50;
 
-const gameSizes = {
-  [`Small`]:  { w: 10,  h: 10 },
-  [`Medium`]: { w: 20,  h: 20 }, 
-  [`Large`]:  { w: 30,  h: 20 }
-};
-const improvedGameSizes = [
+const gameSizes = [
   { name: 'Small',  class: 'small',  w: 10, h: 10 },
   { name: 'Medium', class: 'medium', w: 20, h: 20 },
   { name: 'Large',  class: 'large',  w: 30, h: 20 }
@@ -47,78 +47,61 @@ const needFuncName = (timer, overlay, gameGrid, gameStart) => {
 
 
 
-
-
-/**
- * Constructs a new HTML element.  If the parent is specified in "params" the
- * new element will automatically be added to the parent's heirarcy.
- * > NOTE: onLClick and onRClick will be called in response to a
- * > mouse down event rather than an acutal click event.
- * @param {CreateElemParams} params 
- */
- const createElem = params => {
-  const create = tag => document.createElement(tag ? tag : 'div');
-  const { parent, elemType, onLClick, onRClick, classes } = params;
-  const elem = parent ?
-    parent.appendChild(create(elemType)) :
-    create(elemType);
-  if (classes) elem.classList.add(...classes);
-  if (onLClick || onRClick) {
-    elem.addEventListener('mousedown', e => {
-      if (e.which === 1 && onLClick) onLClick(e);
-      if (e.which === 3 && onRClick) onRClick(e);
-    });
-  };
-  return elem;
-}
-
-
-
 /** Stops the current event propagation. */
 const stopEvent = e => {
   e.preventDefault();
   e.stopPropagation();
 }
 
+
+
+
 const mines = () => {
   let gameStarted = false;
   let mines;
 
-
-  const gameGrid = createElem({
-    onLClick: e => stopEvent(e),
-    classes: ['gameGrid']
-  });
-
-  const { overlay, gameStart, startButtons, statusBoard, timeDisplay } = createElements(improvedGameSizes);
+  const { overlay, gameStart, startButtons, statusBoard, timeDisplay } = createElements(gameSizes);
   overlay.addEventListener('click', () => pause());
   gameStart.addEventListener('click', e => stopEvent(e));
-  // wire up start buttons
   startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
+
   const timer = gameTimer(timeDisplay);
+  const gameGrid = document.createElement('div');
+  gameGrid.classList.add('gameGrid');
+  gameGrid.addEventListener('click', e => stopEvent(e));
+
   const { pause, resume, reset } = needFuncName(timer, overlay, gameGrid, gameStart);
+
+
+  const createRow = grid => {
+    const row = grid.appendChild(document.createElement('div'));
+    row.classList.add('row');
+    return row;
+  }
+  const createCell = (row, lClick, rClick) => {
+    const cell = row.appendChild(document.createElement('div'));
+    cell.classList.add('cell', 'hidden');
+    cell.addEventListener('mousedown', e => {
+      if (e.which === 1) lClick();
+      if (e.which === 3) rClick();
+    });
+    return cell;
+  }
+
 
   const start = (w, h) => {
     if (gameStarted) return;
     gameStarted = true;
     timer.reset();
     gameGrid.appendChild(statusBoard);
-    const grid = createGrid(w, h, (r, rI) => {
-      const row = createElem({
-        parent: gameGrid,
-        classes: ['row']
-      });
-      return (c, cI) => ({
+    const grid = createGrid(w, h, (rI) => {
+      const row = createRow(gameGrid);
+      return (cI) => ({
         y: rI,
         x: cI,
         index: rI * w + cI,
         value: 0,
-        elem: createElem({
-          parent: row, 
-          onLClick: () => click(cI, rI), 
-          onRClick: () => mark(cI, rI), 
-          classes: ['cell', 'hidden']
-        })
+        elem: createCell(row, () => click(cI, rI), () => mark(cI, rI))
       });
     });
 
