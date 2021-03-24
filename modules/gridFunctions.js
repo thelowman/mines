@@ -2,20 +2,20 @@
  * Constructs an array of the specified length and runs the provided function
  * in each cell.
  * @param {number} l Length of the array to create.
- * @param {(null, number) => *} fn A function to run on each cell.
+ * @param {(index:number) => *} fn Return what the cell should contain.
  * @returns {*[]}
  */
-const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(b, i)), []);
+const arrN = (l, fn) => new Array(l).fill(null).reduce((a, b, i) => a.concat(fn(i)), []);
 
 /**
  * Constructs a 2d array the specified width and height/depth and runs the
  * provided function in each cell.
  * @param {number} w The width of the 2d array.
  * @param {number} h The height (or depth) of the 2d array.
- * @param {(null, number) => *} fn A function to run on each cell.
- * @returns 
+ * @param {(index:number) => *} fn Return what the cell should contain.
+ * @returns {*[]}
  */
-export const createGrid = (w, h, fn) => arrN(h, (c, i) => [arrN(w, fn(c, i))]);
+export const createGrid = (w, h, fn) => arrN(h, i => [arrN(w, fn(i))]);
 
 /**
  * Constructs a function that returns the cell at a given index.
