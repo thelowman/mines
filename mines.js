@@ -8,6 +8,10 @@ import {
   border_i,
   byDist,
   generateMines } from './modules/gridFunctions.js';
+import {
+  createElement,
+  addClass,
+  mouseButtons } from './modules/elemFunctions.js';
 
 // Settings
 const revealDelay = 30;
@@ -19,6 +23,7 @@ const gameSizes = [
   { name: 'Large',  class: 'large',  w: 30, h: 20 }
 ];
 
+const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
 
 const needFuncName = (timer, overlay, gameGrid, gameStart) => {
   const pause = () => {
@@ -72,22 +77,9 @@ const mines = () => {
 
   const { pause, resume, reset } = needFuncName(timer, overlay, gameGrid, gameStart);
 
-
-  const createRow = grid => {
-    const row = grid.appendChild(document.createElement('div'));
-    row.classList.add('row');
-    return row;
-  }
-  const createCell = (row, lClick, rClick) => {
-    const cell = row.appendChild(document.createElement('div'));
-    cell.classList.add('cell', 'hidden');
-    cell.addEventListener('mousedown', e => {
-      if (e.which === 1) lClick();
-      if (e.which === 3) rClick();
-    });
-    return cell;
-  }
-
+  const createRow = compose(createElement('div'), addClass('row'));
+  const createCell = (p, l, r) => 
+    mouseButtons(compose(createElement('div'), addClass('cell', 'hidden'))(p))(l, r);
 
   const start = (w, h) => {
     if (gameStarted) return;

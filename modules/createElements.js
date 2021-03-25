@@ -1,38 +1,58 @@
+const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
+/** Compose, with all functions receiving the same input. */
+const passthrough = (...fns) => arg => fns.reduce((val, fn) => { fn(val); return val; }, arg);
+import {
+  createElement,
+  addClass,
+  setText,
+  handle,
+} from './elemFunctions.js';
+
+const createOverlay = compose(createElement('div'), addClass('overlay'));
+
+const createGameStart = compose(
+  compose(createElement('div'), addClass('gameStart')),  
+  passthrough(compose(
+    compose(createElement('div'), addClass('content')),
+    passthrough(
+      compose(createElement('div'), addClass('title'), setText('Pick a game size')),
+      compose(createElement('div'), addClass('buttons'))
+    )
+  ))
+)
+
+const startClick = size => elem => 
+  handle('click', () => elem.dispatchEvent(
+    new CustomEvent('start', {
+      detail: {
+        w: size.w,
+        h: size.h 
+      }
+    })))(elem);
+
+const createStartButton = size => compose(
+  createElement('button'),
+  setText(size.name),
+  addClass(size.class),
+  startClick(size))();
+  
+const createStatusBoard = compose(
+  compose(createElement('div'), addClass('statusBoard')),
+  passthrough(
+    compose(createElement('div'), setText('Time')),
+    compose(createElement('div'), addClass('time'), setText('0'))));
+
 export const createElements = (gameSizes) => {
-  const overlay = document.createElement('div');
-  overlay.classList.add('overlay');
+  const overlay = createOverlay();
+  const gameStart = createGameStart();
+  const startButtons = gameSizes.map(size => createStartButton(size));
 
-  const gameStart = document.createElement('div');
-  gameStart.classList.add('gameStart');
-  gameStart.innerHTML = `
-  <div class="content">
-    <div class="title">Pick a game size</div>
-    <div class="buttons"></div>
-  </div>`;
-  const startButtons = gameSizes.map(size => {
-    const btn = document.createElement('button');
-    btn.innerText = size.name;
-    btn.classList.add(size.class);
-    btn.addEventListener('click', 
-      () => btn.dispatchEvent(new CustomEvent('start', {
-        detail: {
-          w: size.w,
-          h: size.h 
-        }
-      })));
-    return btn;
-  });
+  const btnDiv = gameStart.querySelector('.buttons')
   startButtons.forEach(btn => {
-    const btnDiv = gameStart.querySelector('.buttons').appendChild(document.createElement('div'));
-    btnDiv.classList.add('startButton');
-    btnDiv.appendChild(btn);
+    compose(createElement('div'), addClass('startButton'))(btnDiv).appendChild(btn);
   });
 
-  const statusBoard = document.createElement('div');
-  statusBoard.classList.add('statusBoard');
-  statusBoard.innerHTML = `
-  <div>Time</div>
-  <div class="time">0</div>`;
+  const statusBoard = createStatusBoard();
 
   return { overlay, gameStart, startButtons, statusBoard, timeDisplay:statusBoard.querySelector('.time') }
 }
