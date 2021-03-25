@@ -1,4 +1,5 @@
 import './modules/style.js';
+import { revealDelay, boomDelay, gameSizes } from './skin/settings.js';
 import { createElements } from './modules/createElements.js';
 import { gameTimer } from './modules/gameTimer.js';
 import {
@@ -13,15 +14,7 @@ import {
   addClass,
   mouseButtons } from './modules/elemFunctions.js';
 
-// Settings
-const revealDelay = 30;
-const boomDelay = 50;
 
-const gameSizes = [
-  { name: 'Small',  class: 'small',  w: 10, h: 10 },
-  { name: 'Medium', class: 'medium', w: 20, h: 20 },
-  { name: 'Large',  class: 'large',  w: 30, h: 20 }
-];
 
 const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
 
