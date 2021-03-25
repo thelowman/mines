@@ -94,3 +94,21 @@ export const byDist = (from, targets) => targets.reduce((f, cell) => {
   }
   return mines;
 }
+
+/** @returns {() => number} Function to count the number of marked cells. */
+export const marked = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
+  cell.elem.classList.contains('marked') ?
+    t2 += 1 : t2
+  , 0), 0);
+
+/** @returns {() => number} Function to count the number of unmarked cells without mines. */
+export const remainingCells = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
+  cell.elem.classList.contains('hidden') && cell.value < 9 ?
+    t2 += 1 : t2
+    , 0), 0);
+
+/** @returns {() => number} Function to count the number of mines not yet marked. */
+export const remainingUnmarked = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
+  cell.value === 9 && !cell.elem.classList.contains('marked') ?
+    t2 += 1 : t2
+    , 0), 0);

@@ -8,7 +8,9 @@ import {
   cell_xy, 
   border_i,
   byDist,
-  generateMines } from './modules/gridFunctions.js';
+  generateMines,
+  remainingCells,
+  remainingUnmarked } from './modules/gridFunctions.js';
 
 
 const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
@@ -123,23 +125,8 @@ const mines = () => {
           }, i * revealDelay);
         });
       }
-      if (remainingCells() === 0) win();
+      if (remainingCells(grid) === 0) win();
     }
-
-    const remainingCells = () => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
-      cell.elem.classList.contains('hidden') && cell.value < 9 ?
-        t2 += 1 : t2
-      , 0), 0);
-
-    const marked = () => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
-      cell.elem.classList.contains('marked') ?
-        t2 += 1 : t2
-      , 0), 0);
-
-    const remainingUnmarked = () => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
-      cell.value === 9 && !cell.elem.classList.contains('marked') ?
-        t2 += 1 : t2
-      , 0), 0);
 
     const mark = (x, y) => {
       if (!mines) return;
@@ -147,7 +134,7 @@ const mines = () => {
       if (!cell.elem.classList.contains('hidden')) return;
       if (!cell.elem.classList.contains('marked')) cell.elem.classList.add('marked');
       else cell.elem.classList.remove('marked');
-      if (remainingUnmarked() === 0) win();
+      if (remainingUnmarked(grid) === 0) win();
     }
 
     // first click places mines
