@@ -9,11 +9,6 @@ import {
   border_i,
   byDist,
   generateMines } from './modules/gridFunctions.js';
-import {
-  createElement,
-  addClass,
-  mouseButtons } from './modules/elemFunctions.js';
-
 
 
 const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
@@ -44,35 +39,26 @@ const needFuncName = (timer, overlay, gameGrid, gameStart) => {
 }
 
 
-
-/** Stops the current event propagation. */
-const stopEvent = e => {
-  e.preventDefault();
-  e.stopPropagation();
-}
-
-
-
-
 const mines = () => {
   let gameStarted = false;
   let mines;
 
-  const { overlay, gameStart, startButtons, statusBoard, timeDisplay } = createElements(gameSizes);
-  overlay.addEventListener('click', () => pause());
-  gameStart.addEventListener('click', e => stopEvent(e));
-  startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
+  const {
+    overlay,
+    gameStart,
+    startButtons,
+    statusBoard,
+    timeDisplay,
+    gameGrid,
+    createRow,
+    createCell
+  } = createElements(gameSizes);
 
+  overlay.addEventListener('click', () => pause());
+  startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
   const timer = gameTimer(timeDisplay);
-  const gameGrid = document.createElement('div');
-  gameGrid.classList.add('gameGrid');
-  gameGrid.addEventListener('click', e => stopEvent(e));
 
   const { pause, resume, reset } = needFuncName(timer, overlay, gameGrid, gameStart);
-
-  const createRow = compose(createElement('div'), addClass('row'));
-  const createCell = (p, l, r) => 
-    mouseButtons(compose(createElement('div'), addClass('cell', 'hidden'))(p))(l, r);
 
   const start = (w, h) => {
     if (gameStarted) return;
