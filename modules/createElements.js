@@ -1,7 +1,6 @@
-const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
-/** Compose, with all functions receiving the same input. */
-const passthrough = (...fns) => arg => fns.reduce((val, fn) => { fn(val); return val; }, arg);
 import {
+  compose,
+  passthrough,
   createElement,
   addClass,
   setText,

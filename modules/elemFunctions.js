@@ -1,3 +1,8 @@
+/** Passes the output of each function to the next function. */
+export const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
+/** Compose, with all functions receiving the same input. */
+export const passthrough = (...fns) => arg => fns.reduce((val, fn) => { fn(val); return val; }, arg);
+
 export const createElement = tag => parent => parent ?
   parent.appendChild(document.createElement(tag)) :
   document.createElement(tag);

@@ -20,9 +20,6 @@ import {
   explodeCell
 } from './skin/settings.js';
 
-
-const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
-
 const needFuncName = (timer, overlay, gameGrid, gameStart) => {
   const pause = () => {
     timer.pause();
@@ -130,8 +127,8 @@ const mines = () => {
           setTimeout(() => {
             cells.forEach(c => {
               c.elem.classList.remove('hidden');
-              revealCell(cell);
               if (c.value > 0) c.elem.innerText = c.value;
+              revealCell(c);
             });
           }, i * revealDelay);
         });

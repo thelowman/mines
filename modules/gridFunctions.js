@@ -72,7 +72,7 @@ export const byDist = (from, targets) => targets.reduce((f, cell) => {
 }, []);
 
 /**
- * Generates a random dispersement of mines.
+ * Generates a random dispersement of mines, avoiding the cell that was clicked.
  * @param {number} w Width of the grid.
  * @param {number} h Height of the grid.
  * @param {number} d Density of mines (0 - 1).
@@ -95,19 +95,19 @@ export const byDist = (from, targets) => targets.reduce((f, cell) => {
   return mines;
 }
 
-/** @returns {() => number} Function to count the number of marked cells. */
+/** @returns {number} Function to count the number of marked cells. */
 export const marked = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
   cell.elem.classList.contains('marked') ?
     t2 += 1 : t2
   , 0), 0);
 
-/** @returns {() => number} Function to count the number of unmarked cells without mines. */
+/** @returns {number} Function to count the number of unmarked cells without mines. */
 export const remainingCells = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
   cell.elem.classList.contains('hidden') && cell.value < 9 ?
     t2 += 1 : t2
     , 0), 0);
 
-/** @returns {() => number} Function to count the number of mines not yet marked. */
+/** @returns {number} Function to count the number of mines not yet marked. */
 export const remainingUnmarked = grid => grid.reduce((t, row) => t += row.reduce((t2, cell) => 
   cell.value === 9 && !cell.elem.classList.contains('marked') ?
     t2 += 1 : t2

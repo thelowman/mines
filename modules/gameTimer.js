@@ -8,9 +8,9 @@ export const gameTimer = elem => {
   let started;
   let interval;
   const tick = () => {
-    elapsed += new Date() - started;
+    elapsed += new Date().valueOf() - started;
     started = new Date();
-    elem.innerText = Math.floor(elapsed / 1000);
+    elem.innerText = (elapsed / 1000).toFixed(1);
   }
   const start = () => {
     started = new Date();
@@ -23,7 +23,7 @@ export const gameTimer = elem => {
   const reset = () => {
     if (interval) pause();
     elapsed = 0;
-    elem.innerText = 0;
+    elem.innerText = (0).toFixed(1);
   }
   reset();
   return { start, pause, reset }
