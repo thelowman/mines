@@ -20,6 +20,7 @@ const createGameStart = compose(
   passthrough(compose(
     compose(createElement('div'), addClass('content')),
     passthrough(
+      compose(createElement('div'), addClass('result')),
       compose(createElement('div'), addClass('title'), setText('Pick a game size')),
       compose(createElement('div'), addClass('buttons'))
     )
@@ -82,6 +83,7 @@ export const createElements = (gameSizes, initCell) => {
   return {
     overlay,
     gameStart,
+    result:gameStart.querySelector('.result'),
     startButtons,
     statusBoard,
     timeDisplay:statusBoard.querySelector('.time'),

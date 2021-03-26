@@ -16,7 +16,7 @@ import {
 } from '../skin/settings.js';
 
 
-export const startGame = (timer, gameGrid, createRow, createCell, reset, w, h) => {
+export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, h) => {
   let mines;
 
   timer.reset();
@@ -103,8 +103,9 @@ export const startGame = (timer, gameGrid, createRow, createCell, reset, w, h) =
   }
 
   const win = () => {
-    reset();
+    timer.pause();
     mines = null;
+    won();
   }
 
   const boom = (x, y) => {
@@ -123,8 +124,8 @@ export const startGame = (timer, gameGrid, createRow, createCell, reset, w, h) =
     });
     
     setTimeout(() => {
-      reset();
       mines = null;
+      lost();
     }, unmarked.length * 50 + 1000);
   }
 }

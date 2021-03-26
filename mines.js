@@ -10,6 +10,7 @@ const mines = () => {
   const {
     overlay,
     gameStart,
+    result,
     startButtons,
     statusBoard,
     timeDisplay,
@@ -23,10 +24,12 @@ const mines = () => {
   startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
   const timer = gameTimer(timeDisplay);
 
+
+
   const start = (w, h) => {
     if (!gameStarted) {
       gameStart.classList.remove('shown');
-      startGame(timer, gameGrid, createRow, createCell, reset, w, h);
+      startGame(timer, gameGrid, createRow, createCell, won, lost, w, h);
       setTimeout(() => {
         overlay.removeChild(gameStart);
         overlay.appendChild(gameGrid);
@@ -52,13 +55,22 @@ const mines = () => {
     setTimeout(() => {
       overlay.removeChild(gameGrid);
       overlay.appendChild(gameStart);
-      // bug here, this removes status board so it has to be put back
       while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
-      gameGrid.appendChild(statusBoard);
+      gameGrid.appendChild(statusBoard); // put the status board back
       setTimeout(() => gameStart.classList.add('shown'), 100);
       gameStarted = false;      
     }, 500);
   }
+  const won = () => {
+    result.innerText = `You Won!  Total time: ${timer.time} seconds.`;
+    reset();
+  }
+  const lost = () => {
+    result.innerText = 'Oops!';
+    reset();
+  }
+
+
 
   window.oncontextmenu = e => false;
   document.body.appendChild(overlay);

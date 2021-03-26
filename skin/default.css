@@ -24,6 +24,10 @@
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgb(0 0 0 / 50%);
 }
+.result {
+  text-align: center;
+  margin-bottom: 26px;
+}
 .title {
   text-align: center;
   margin-bottom: 20px;
