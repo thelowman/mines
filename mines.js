@@ -50,9 +50,11 @@ const mines = () => {
   const reset = () => {
     gameGrid.classList.remove('shown');
     setTimeout(() => {
-      while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
       overlay.removeChild(gameGrid);
       overlay.appendChild(gameStart);
+      // bug here, this removes status board so it has to be put back
+      while(gameGrid.firstChild) gameGrid.removeChild(gameGrid.firstChild);
+      gameGrid.appendChild(statusBoard);
       setTimeout(() => gameStart.classList.add('shown'), 100);
       gameStarted = false;      
     }, 500);
