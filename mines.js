@@ -1,5 +1,4 @@
 import './modules/style.js';
-import { revealDelay, boomDelay, gameSizes } from './skin/settings.js';
 import { createElements } from './modules/createElements.js';
 import { gameTimer } from './modules/gameTimer.js';
 import {
@@ -10,7 +9,16 @@ import {
   byDist,
   generateMines,
   remainingCells,
-  remainingUnmarked } from './modules/gridFunctions.js';
+  remainingUnmarked
+} from './modules/gridFunctions.js';
+import {
+  revealDelay,
+  boomDelay,
+  gameSizes,
+  initCell,
+  revealCell,
+  explodeCell
+} from './skin/settings.js';
 
 
 const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
@@ -54,7 +62,7 @@ const mines = () => {
     gameGrid,
     createRow,
     createCell
-  } = createElements(gameSizes);
+  } = createElements(gameSizes, initCell);
 
   overlay.addEventListener('click', () => pause());
   startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
@@ -107,11 +115,13 @@ const mines = () => {
         cell.elem.classList.contains('marked')) return;
       if (cell.value === 9) {
         cell.elem.classList.remove('hidden');
+        revealCell(cell);
         boom(cell.x, cell.y);
         return;
       }
       if (cell.value > 0) {
         cell.elem.classList.remove('hidden');
+        revealCell(cell);
         cell.elem.innerText = cell.value;
       }
       else {
@@ -120,6 +130,7 @@ const mines = () => {
           setTimeout(() => {
             cells.forEach(c => {
               c.elem.classList.remove('hidden');
+              revealCell(cell);
               if (c.value > 0) c.elem.innerText = c.value;
             });
           }, i * revealDelay);
@@ -168,7 +179,10 @@ const mines = () => {
         return f;
       }, []));
       unmarked.forEach((um, i) => {
-        setTimeout(() => um.forEach(c => c.elem.classList.add('boom')), i * boomDelay);
+        setTimeout(() => um.forEach(c => {
+          c.elem.classList.add('boom');
+          explodeCell(c);
+        }), i * boomDelay);
       });
       
       setTimeout(() => {

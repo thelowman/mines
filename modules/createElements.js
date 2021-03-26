@@ -54,11 +54,20 @@ const createGameGrid = compose(
   addClass('gameGrid'), 
   handle('click', stopEvent));
 const createRow = compose(createElement('div'), addClass('row'));
-const createCell = (p, l, r) => 
-  mouseButtons(compose(createElement('div'), addClass('cell', 'hidden'))(p))(l, r);
+const createCell = (init) => (p, l, r) => 
+  mouseButtons(compose(
+    createElement('div'),
+    addClass('cell', 'hidden'),
+    init)(p))(l, r);
   
 
-export const createElements = (gameSizes) => {
+
+
+
+
+
+
+export const createElements = (gameSizes, initCell) => {
   const overlay = createOverlay();
   const gameStart = createGameStart();
 
@@ -79,6 +88,6 @@ export const createElements = (gameSizes) => {
     timeDisplay:statusBoard.querySelector('.time'),
     gameGrid,
     createRow,
-    createCell
+    createCell: createCell(initCell)
   }
 }

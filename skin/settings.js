@@ -6,3 +6,7 @@ export const gameSizes = [
   { name: 'Medium', class: 'medium', w: 20, h: 20 },
   { name: 'Large',  class: 'large',  w: 30, h: 20 }
 ];
+
+export const initCell = cell => cell;
+export const revealCell = cell => {};
+export const explodeCell = cell => {};
