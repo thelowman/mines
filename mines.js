@@ -28,6 +28,7 @@ const mines = () => {
 
   const start = (w, h) => {
     if (!gameStarted) {
+      gameStarted = true;
       gameStart.classList.remove('shown');
       startGame(timer, gameGrid, createRow, createCell, won, lost, w, h);
       setTimeout(() => {
