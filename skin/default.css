@@ -100,6 +100,9 @@
 .marked:after {
   content: "✗";
 }
+.wrong {
+  background-color: #ff0;
+}
 .boom {
   background: red;
 }
