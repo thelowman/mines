@@ -5,7 +5,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,.5);
+  background-color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,6 +92,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   transition: background-color 0.1s;
 }
 .hidden {
@@ -104,5 +105,61 @@
   background-color: #ff0;
 }
 .boom {
-  background: red;
+  background: radial-gradient(closest-side, rgb(132 132 132), rgb(241 241 241), #aaa);
+}
+
+.revealed::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  background-color: #aaa;
+}
+.revealed.c0::after  { animation: fall0  .3s ease-in forwards; }
+.revealed.c1::after  { animation: fall1  .4s ease-in forwards; }
+.revealed.c2::after  { animation: fall2  .4s ease-in forwards; }
+.revealed.c3::after  { animation: fall3  .3s ease-in forwards; }
+.revealed.c4::after  { animation: fall4  .4s ease-in forwards; }
+.revealed.c5::after  { animation: fall5  .3s ease-in forwards; }
+.revealed.c6::after  { animation: fall6  .4s ease-in forwards; }
+.revealed.c7::after  { animation: fall7  .3s ease-in forwards; }
+.revealed.c8::after  { animation: fall8  .4s ease-in forwards; }
+.revealed.c9::after  { animation: fall9  .4s ease-in forwards; }
+.revealed.c10::after { animation: fall10 .3s ease-in forwards; }
+@keyframes fall0  { 100% { transform: scale(0) rotateX(10deg) rotateZ(40deg); }}
+@keyframes fall1  { 100% { transform: scale(0) rotateX(20deg) rotateY(10deg); }}
+@keyframes fall2  { 100% { transform: scale(0) rotateY(90deg) rotateZ(30deg); }}
+@keyframes fall3  { 100% { transform: scale(0) rotateX(-36deg) rotateY(26deg); }}
+@keyframes fall4  { 100% { transform: scale(0) rotateY(80deg) rotateZ(44deg); }}
+@keyframes fall5  { 100% { transform: scale(0) rotateX(130deg) rotateY(19deg); }}
+@keyframes fall6  { 100% { transform: scale(0) rotateX(-80deg) rotateY(70Deg) rotateZ(28deg); }}
+@keyframes fall7  { 100% { transform: scale(0) rotateY(-200deg) rotateZ(-65deg); }}
+@keyframes fall8  { 100% { transform: scale(0) rotateX(6deg) rotateY(-50deg); }}
+@keyframes fall9  { 100% { transform: scale(0) rotateY(154deg) rotateZ(-90deg); }}
+@keyframes fall10 { 100% { transform: scale(0) rotateX(10deg) rotateY(-76deg) rotateZ(-34deg); }}
+
+.boom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 2;
+  animation: boom .3s ease-out forwards;
+}
+@keyframes boom {
+  50% {
+    transform: scale(3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
 }

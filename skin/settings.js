@@ -1,4 +1,4 @@
-export const revealDelay = 30;
+export const revealDelay = 60;
 export const boomDelay = 50;
 
 export const gameSizes = [

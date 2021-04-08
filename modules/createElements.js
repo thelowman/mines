@@ -49,7 +49,7 @@ const createRow = el.compose(el.create('div'), el.addClass('row'));
 const createCell = (init) => (p, l, r) => 
   el.mouseButtons(el.compose(
     el.create('div'),
-    el.addClass('cell', 'hidden'),
+    el.addClass('cell', 'hidden', `c${(Math.random() * 10).toFixed(0)}`),
     init)(p))(l, r);
   
 

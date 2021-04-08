@@ -52,24 +52,31 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
     if (!cell.elem.classList.contains('hidden') || 
       cell.elem.classList.contains('marked')) return;
     if (cell.value === 9) {
+      // Hit a mine
       cell.elem.classList.remove('hidden');
       revealCell(cell);
       boom(cell.x, cell.y);
       return;
     }
     if (cell.value > 0) {
+      // Hit a cell near a mine
       cell.elem.classList.remove('hidden');
+      cell.elem.classList.add('revealed');
       revealCell(cell);
       cell.elem.innerText = cell.value;
     }
     else {
+      // Hit a cell away from any mines
       let revealedCells = byDist(cell, adjacent([], cell));
       revealedCells.forEach((cells, i) => {
         setTimeout(() => {
           cells.forEach(c => {
-            c.elem.classList.remove('hidden');
-            if (c.value > 0) c.elem.innerText = c.value;
-            revealCell(c);
+            if (c.elem.classList.contains('hidden')) {
+              c.elem.classList.remove('hidden');
+              c.elem.classList.add('revealed', 'multiple');
+              if (c.value > 0) c.elem.innerText = c.value;
+              revealCell(c);
+            }
           });
         }, i * revealDelay);
       });
