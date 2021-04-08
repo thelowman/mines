@@ -1,63 +1,55 @@
-import {
-  compose,
-  passthrough,
-  createElement,
-  addClass,
-  setText,
-  mouseButtons,
-  handle,
-} from './elemFunctions.js';
+import * as el from './elemFunctions.js';
 
 const stopEvent = e => {
   e.preventDefault();
   e.stopPropagation();
 }
 
-const createOverlay = compose(createElement('div'), addClass('overlay'));
+const createOverlay = el.compose(el.create('div'), el.addClass('overlay'));
 
-const createGameStart = compose(
-  compose(createElement('div'), addClass('gameStart'), handle('click', stopEvent)),  
-  passthrough(compose(
-    compose(createElement('div'), addClass('content')),
-    passthrough(
-      compose(createElement('div'), addClass('result')),
-      compose(createElement('div'), addClass('title'), setText('Pick a game size')),
-      compose(createElement('div'), addClass('buttons'))
+const createGameStart = el.compose(
+  el.compose(el.create('div'), el.addClass('gameStart'), el.handle('click', stopEvent)),  
+  el.passthrough(el.compose(
+    el.compose(el.create('div'), el.addClass('content')),
+    el.passthrough(
+      el.compose(el.create('div'), el.addClass('result')),
+      el.compose(el.create('div'), el.addClass('title'), el.setText('Pick a game size')),
+      el.compose(el.create('div'), el.addClass('buttons'))
     )
   ))
 )
 
-const startClick = size => elem => 
-  handle('click', () => elem.dispatchEvent(
+const startClick = size => element => 
+  el.handle('click', () => element.dispatchEvent(
     new CustomEvent('start', {
       detail: {
         w: size.w,
         h: size.h 
       }
-    })))(elem);
+    })))(element);
 
-const createStartButton = size => compose(
-  createElement('button'),
-  setText(size.name),
-  addClass(size.class),
+const createStartButton = size => el.compose(
+  el.create('button'),
+  el.setText(size.name),
+  el.addClass(size.class),
   startClick(size))();
   
-const createStatusBoard = compose(
-  compose(createElement('div'), addClass('statusBoard')),
-  passthrough(
-    compose(createElement('div'), setText('Time')),
-    compose(createElement('div'), addClass('time'), setText('0'))));
+const createStatusBoard = el.compose(
+  el.compose(el.create('div'), el.addClass('statusBoard')),
+  el.passthrough(
+    el.compose(el.create('div'), el.setText('Time')),
+    el.compose(el.create('div'), el.addClass('time'), el.setText('0'))));
 
 // Game grid elements
-const createGameGrid = compose(
-  createElement('div'), 
-  addClass('gameGrid'), 
-  handle('click', stopEvent));
-const createRow = compose(createElement('div'), addClass('row'));
+const createGameGrid = el.compose(
+  el.create('div'), 
+  el.addClass('gameGrid'), 
+  el.handle('click', stopEvent));
+const createRow = el.compose(el.create('div'), el.addClass('row'));
 const createCell = (init) => (p, l, r) => 
-  mouseButtons(compose(
-    createElement('div'),
-    addClass('cell', 'hidden'),
+  el.mouseButtons(el.compose(
+    el.create('div'),
+    el.addClass('cell', 'hidden'),
     init)(p))(l, r);
   
 
@@ -74,7 +66,7 @@ export const createElements = (gameSizes, initCell) => {
   const startButtons = gameSizes.map(size => createStartButton(size));
   const btnDiv = gameStart.querySelector('.buttons')
   startButtons.forEach(btn => {
-    compose(createElement('div'), addClass('startButton'))(btnDiv).appendChild(btn);
+    el.compose(el.create('div'), el.addClass('startButton'))(btnDiv).appendChild(btn);
   });
 
   const statusBoard = createStatusBoard();

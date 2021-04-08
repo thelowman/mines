@@ -3,7 +3,7 @@ export const compose = (...fns) => arg => fns.reduce((a, fn) => fn(a), arg);
 /** Compose, with all functions receiving the same input. */
 export const passthrough = (...fns) => arg => fns.reduce((val, fn) => { fn(val); return val; }, arg);
 
-export const createElement = tag => parent => parent ?
+export const create = tag => parent => parent ?
   parent.appendChild(document.createElement(tag)) :
   document.createElement(tag);
 
@@ -17,7 +17,12 @@ export const mouseButtons = elem => (onLeft, onRight) => {
   });
   return elem;
 }
-
+/**
+ * Adds the provided event listener to the element.
+ * @param {string} eventName The event name.
+ * @param {(e:Event) => void} action Handler for the event.
+ * @returns {(elem:HTMLElement) => HTMLElement} Function to add the handler.
+ */
 export const handle = (eventName, action) => elem => {
   elem.addEventListener(eventName, action);
   return elem;
