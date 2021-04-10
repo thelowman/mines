@@ -118,10 +118,11 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
   const boom = (x, y) => {
     timer.pause();
     
+    gameGrid.classList.add('boom');
     grid.forEach(r => 
       r.forEach(c => { 
         if (c.elem.classList.contains('marked') && c.value < 9)
-          c.elem.classList.add('wrong'); 
+          c.elem.classList.add('wrong');
       }));
 
     const unmarked = byDist(byCoord(x, y), mines.reduce((f, m) => {
@@ -135,6 +136,7 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
         explodeCell(c);
       }), i * boomDelay);
     });
+    setTimeout(() => gameGrid.classList.remove('boom'), unmarked.length * boomDelay);
     
     setTimeout(() => {
       mines = null;
