@@ -64,6 +64,7 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
       cell.elem.classList.add('revealed');
       revealCell(cell);
       cell.elem.innerText = cell.value;
+      if (remainingCells(grid) === 0) win();
     }
     else {
       // Hit a cell away from any mines
@@ -80,8 +81,10 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
           });
         }, i * revealDelay);
       });
+      setTimeout(() => {
+        if(remainingCells(grid) === 0) win();
+      }, revealedCells.length * revealDelay);
     }
-    if (remainingCells(grid) === 0) win();
   }
 
   const mark = (x, y) => {
