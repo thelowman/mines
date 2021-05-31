@@ -26,5 +26,6 @@ export const gameTimer = elem => {
     elem.innerText = (0).toFixed(1);
   }
   reset();
-  return { start, pause, reset, get time() { return (elapsed / 1000).toFixed(1); } }
+  // return { start, pause, reset, get time() { return (elapsed / 1000).toFixed(1); } }
+  return { start, pause, reset, get time() { return elapsed; } }
 }

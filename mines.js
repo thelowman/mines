@@ -3,6 +3,7 @@ import { createElements } from './modules/createElements.js';
 import { gameTimer } from './modules/gameTimer.js';
 import { gameSizes, initCell } from './skin/settings.js';
 import { startGame } from './modules/game.js';
+import { getHighScores, setHighScore } from './modules/highScores.js';
 
 const mines = () => {
   let gameStarted = false;
@@ -11,6 +12,7 @@ const mines = () => {
     overlay,
     gameStart,
     result,
+    highScores,
     startButtons,
     statusBoard,
     timeDisplay,
@@ -23,7 +25,6 @@ const mines = () => {
   overlay.addEventListener('click', () => pause());
   startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
   const timer = gameTimer(timeDisplay);
-
 
 
   const start = (w, h) => {
@@ -62,12 +63,29 @@ const mines = () => {
       gameStarted = false;      
     }, 500);
   }
-  const won = () => {
-    result.innerText = `You Won!  Total time: ${timer.time} seconds.`;
+  const won = (w, h) => {
+    const high = setHighScore(w, h, timer.time);
+    result.innerText = `You Won!  Total time: ${(timer.time / 1000).toFixed(1)} seconds.`;
+    highScores.innerHTML = high.reduce((html, score) => {
+      html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
+      html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
+      return html;
+    }, '');
     reset();
   }
-  const lost = () => {
+  const lost = (w, h) => {
     result.innerText = 'Oops!';
+    const high = getHighScores(w, h);
+    if (high.length > 0) {
+      highScores.innerHTML = high.reduce((html, score) => {
+        html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
+        html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
+        return html;
+      }, '');
+    }
+    else {
+      highScores.innerHTML = `<div class="score"><div>No games won yet</div></div>`;
+    }
     reset();
   }
 

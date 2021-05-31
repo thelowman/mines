@@ -13,6 +13,8 @@ const createGameStart = el.compose(
     el.compose(el.create('div'), el.addClass('content')),
     el.passthrough(
       el.compose(el.create('div'), el.addClass('result')),
+      el.compose(el.create('div'), el.addClass('title'), el.setText('High Scores')),
+      el.compose(el.create('div'), el.addClass('highScores')),
       el.compose(el.create('div'), el.addClass('title'), el.setText('Pick a game size')),
       el.compose(el.create('div'), el.addClass('buttons'))
     )
@@ -76,6 +78,7 @@ export const createElements = (gameSizes, initCell) => {
     overlay,
     gameStart,
     result:gameStart.querySelector('.result'),
+    highScores: gameStart.querySelector('.highScores'),
     startButtons,
     statusBoard,
     timeDisplay:statusBoard.querySelector('.time'),

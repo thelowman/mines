@@ -28,6 +28,17 @@
   text-align: center;
   margin-bottom: 26px;
 }
+.highScores {
+  margin-bottom: 1em;
+}
+.highScores>.score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.highScores>.score>div:first-child {
+  margin-right: 1em;
+}
 .title {
   text-align: center;
   margin-bottom: 20px;

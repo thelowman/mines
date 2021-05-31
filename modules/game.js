@@ -115,7 +115,7 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
   const win = () => {
     timer.pause();
     mines = null;
-    won();
+    won(w, h);
   }
 
   const boom = (x, y) => {
@@ -143,7 +143,7 @@ export const startGame = (timer, gameGrid, createRow, createCell, won, lost, w, 
     
     setTimeout(() => {
       mines = null;
-      lost();
+      lost(w, h);
     }, unmarked.length * 50 + 1000);
   }
 }
