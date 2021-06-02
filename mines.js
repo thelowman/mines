@@ -4,16 +4,24 @@ import { gameTimer } from './modules/gameTimer.js';
 import { gameSizes, initCell } from './skin/settings.js';
 import { startGame } from './modules/game.js';
 import { getHighScores, setHighScore } from './modules/highScores.js';
+// new
+import {
+  gameStart,
+  gsWin,
+  gsLoose,
+  gsHighScores,
+  setStartFn
+} from './modules/elements/gameStart.js';
 
 const mines = () => {
   let gameStarted = false;
 
   const {
     overlay,
-    gameStart,
-    result,
-    highScores,
-    startButtons,
+    // gameStart,
+    // result,
+    // highScores,
+    // startButtons,
     statusBoard,
     timeDisplay,
     gameGrid,
@@ -23,11 +31,12 @@ const mines = () => {
 
   gameGrid.appendChild(statusBoard); // move to create element
   overlay.addEventListener('click', () => pause());
-  startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
+  // startButtons.forEach(btn => btn.addEventListener('start', e => start(e.detail.w, e.detail.h)));
   const timer = gameTimer(timeDisplay);
 
 
-  const start = (w, h) => {
+  // const start = (w, h) => {
+  setStartFn((w, h) => {
     if (!gameStarted) {
       gameStarted = true;
       gameStart.classList.remove('shown');
@@ -39,7 +48,8 @@ const mines = () => {
       }, 250);
     }
     else console.warn('A game is already in progress.');
-  }
+  });
+
   const pause = () => {
     timer.pause();
     window.oncontextmenu = e => true;
@@ -64,28 +74,30 @@ const mines = () => {
     }, 500);
   }
   const won = (w, h) => {
-    const high = setHighScore(w, h, timer.time);
-    result.innerText = `You Won!  Total time: ${(timer.time / 1000).toFixed(1)} seconds.`;
-    highScores.innerHTML = high.reduce((html, score) => {
-      html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
-      html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
-      return html;
-    }, '');
+    // const high = setHighScore(w, h, timer.time);
+    gsWin(`You Won!  Total time: ${(timer.time / 1000).toFixed(1)} seconds.`);
+    gsHighScores(setHighScore(w, h, timer.time));
+    // highScores.innerHTML = high.reduce((html, score) => {
+    //   html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
+    //   html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
+    //   return html;
+    // }, '');
     reset();
   }
   const lost = (w, h) => {
-    result.innerText = 'Oops!';
-    const high = getHighScores(w, h);
-    if (high.length > 0) {
-      highScores.innerHTML = high.reduce((html, score) => {
-        html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
-        html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
-        return html;
-      }, '');
-    }
-    else {
-      highScores.innerHTML = `<div class="score"><div>No games won yet</div></div>`;
-    }
+    gsLoose('Oops!');
+    gsHighScores(getHighScores(w, h));
+    // const high = getHighScores(w, h);
+    // if (high.length > 0) {
+    //   highScores.innerHTML = high.reduce((html, score) => {
+    //     html += `<div class="score"><div>${(score.time / 1000).toFixed(1)}</div>`;
+    //     html += `<div>${new Date(score.date).toLocaleDateString()}</div></div>`;
+    //     return html;
+    //   }, '');
+    // }
+    // else {
+    //   highScores.innerHTML = `<div class="score"><div>No games won yet</div></div>`;
+    // }
     reset();
   }
 

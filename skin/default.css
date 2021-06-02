@@ -23,6 +23,11 @@
   transition: opacity 0.25s;
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgb(0 0 0 / 50%);
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 .result {
   text-align: center;
@@ -30,6 +35,9 @@
 }
 .highScores {
   margin-bottom: 1em;
+}
+.highScores>.highScoreTitle {
+  text-align: center;
 }
 .highScores>.score {
   display: flex;

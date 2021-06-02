@@ -63,23 +63,23 @@ const createCell = (init) => (p, l, r) =>
 
 export const createElements = (gameSizes, initCell) => {
   const overlay = createOverlay();
-  const gameStart = createGameStart();
+  // const gameStart = createGameStart();
 
-  const startButtons = gameSizes.map(size => createStartButton(size));
-  const btnDiv = gameStart.querySelector('.buttons')
-  startButtons.forEach(btn => {
-    el.compose(el.create('div'), el.addClass('startButton'))(btnDiv).appendChild(btn);
-  });
+  // const startButtons = gameSizes.map(size => createStartButton(size));
+  // const btnDiv = gameStart.querySelector('.buttons')
+  // startButtons.forEach(btn => {
+  //   el.compose(el.create('div'), el.addClass('startButton'))(btnDiv).appendChild(btn);
+  // });
 
   const statusBoard = createStatusBoard();
   const gameGrid = createGameGrid();
 
   return {
     overlay,
-    gameStart,
-    result:gameStart.querySelector('.result'),
-    highScores: gameStart.querySelector('.highScores'),
-    startButtons,
+    // gameStart,
+    // result:gameStart.querySelector('.result'),
+    // highScores: gameStart.querySelector('.highScores'),
+    // startButtons,
     statusBoard,
     timeDisplay:statusBoard.querySelector('.time'),
     gameGrid,

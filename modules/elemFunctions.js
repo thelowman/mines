@@ -9,6 +9,7 @@ export const create = tag => parent => parent ?
 
 export const setText = text => elem => { elem.innerText = text; return elem; }
 export const addClass = (...styles) => elem => { elem.classList.add(...styles); return elem; }
+export const innerHTML = htmlStr => elem => { elem.innerHTML = htmlStr; return elem; }
 
 export const mouseButtons = elem => (onLeft, onRight) => {
   elem.addEventListener('mousedown', e => {
