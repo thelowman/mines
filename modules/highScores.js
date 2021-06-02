@@ -39,11 +39,9 @@ export const getHighScores = (w, h) => {
  * @returns {Score[]}
  */
 export const setHighScore = (w, h, time) => {
-  let unsaved = false;
   let scores = JSON.parse(localStorage.getItem(storageKey));
   if (!scores) {
     scores = [];
-    unsaved = true;
   }
   let forGame = scores.find(s => s.width === w && s.height === h);
   if (!forGame) {
@@ -53,13 +51,11 @@ export const setHighScore = (w, h, time) => {
       scores: []
     };
     scores.push(forGame);
-    unsaved = true;
   }
   forGame.scores.push({ time, date: new Date() });
   forGame.scores.sort((a, b) => a.time > b.time ? 1 : a.time < b.time ? -1 : 0);
   if (forGame.scores.length > numScoresToKeep)
     forGame.scores.splice(numScoresToKeep - 1, forGame.scores.length);
-  if (unsaved)
-    localStorage.setItem(storageKey, JSON.stringify(scores));
+  localStorage.setItem(storageKey, JSON.stringify(scores));
   return forGame.scores;
 }
