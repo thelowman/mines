@@ -13,6 +13,19 @@
 const storageKey = 'HighScores';
 const numScoresToKeep = 3;
 
+export const loadHighScores = () => {
+  const sText = localStorage.getItem(storageKey);
+  if (!sText) return [];
+  return JSON.parse(sText).map(score => ({
+    height: score.height,
+    width: score.width,
+    scores: score.scores.map(s => ({
+      time: s.time,
+      date: new Date(s.date)
+    }))
+  }));
+}
+
 /**
  * Returns the high scores for the game grid size specified.
  * @param {number} w Width of the game grid.
@@ -20,7 +33,7 @@ const numScoresToKeep = 3;
  * @returns {Score[]}
  */
 export const getHighScores = (w, h) => {
-  const scores = JSON.parse(localStorage.getItem(storageKey));
+  const scores = loadHighScores();
   if (scores) {
     /** @type HighScore */
     let forGame = scores.find(s => s.width === w && s.height === h);
@@ -39,10 +52,7 @@ export const getHighScores = (w, h) => {
  * @returns {Score[]}
  */
 export const setHighScore = (w, h, time) => {
-  let scores = JSON.parse(localStorage.getItem(storageKey));
-  if (!scores) {
-    scores = [];
-  }
+  let scores = loadHighScores();
   let forGame = scores.find(s => s.width === w && s.height === h);
   if (!forGame) {
     forGame = {
@@ -55,7 +65,7 @@ export const setHighScore = (w, h, time) => {
   forGame.scores.push({ time, date: new Date() });
   forGame.scores.sort((a, b) => a.time > b.time ? 1 : a.time < b.time ? -1 : 0);
   if (forGame.scores.length > numScoresToKeep)
-    forGame.scores.splice(numScoresToKeep - 1, forGame.scores.length);
+    forGame.scores.splice(numScoresToKeep, forGame.scores.length);
   localStorage.setItem(storageKey, JSON.stringify(scores));
   return forGame.scores;
 }
